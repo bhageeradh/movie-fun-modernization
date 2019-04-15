@@ -16,7 +16,6 @@
  */
 package org.superbiz.moviefun.movies;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -35,9 +34,9 @@ public class MovieServlet extends HttpServlet {
 
     private static final long serialVersionUID = -5832176047021911038L;
 
-    @Autowired
-    private final MoviesBean moviesBean;
+    public static int PAGE_SIZE = 5;
 
+    private MoviesBean moviesBean;
 
     public MovieServlet(MoviesBean moviesBean) {
         this.moviesBean = moviesBean;
@@ -98,10 +97,9 @@ public class MovieServlet extends HttpServlet {
 
             try {
                 page = Integer.parseInt(request.getParameter("page"));
-            } catch (Exception ignored) {
+            } catch (Exception e) {
             }
 
-            int PAGE_SIZE = 5;
             int pageCount = (count / PAGE_SIZE);
             if (pageCount == 0 || count % PAGE_SIZE != 0) {
                 pageCount++;
@@ -114,7 +112,6 @@ public class MovieServlet extends HttpServlet {
             if (page > pageCount) {
                 page = pageCount;
             }
-
 
             int start = (page - 1) * PAGE_SIZE;
             List<Movie> range;
