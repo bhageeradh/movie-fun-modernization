@@ -14,14 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.superbiz.moviefun;
+package org.superbiz.moviefun.movies;
 
-import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.superbiz.moviefun.movies.Movie;
-import org.superbiz.moviefun.movies.MoviesBean;
+import org.springframework.util.StringUtils;
 
-import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -33,14 +31,17 @@ import java.util.List;
  * @version $Revision$ $Date$
  */
 @Component
-public class ActionServlet extends HttpServlet {
+public class MovieServlet extends HttpServlet {
 
     private static final long serialVersionUID = -5832176047021911038L;
 
-    public static int PAGE_SIZE = 5;
+    @Autowired
+    private final MoviesBean moviesBean;
 
-    @EJB
-    private MoviesBean moviesBean;
+
+    public MovieServlet(MoviesBean moviesBean) {
+        this.moviesBean = moviesBean;
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -97,9 +98,10 @@ public class ActionServlet extends HttpServlet {
 
             try {
                 page = Integer.parseInt(request.getParameter("page"));
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
 
+            int PAGE_SIZE = 5;
             int pageCount = (count / PAGE_SIZE);
             if (pageCount == 0 || count % PAGE_SIZE != 0) {
                 pageCount++;
@@ -112,6 +114,7 @@ public class ActionServlet extends HttpServlet {
             if (page > pageCount) {
                 page = pageCount;
             }
+
 
             int start = (page - 1) * PAGE_SIZE;
             List<Movie> range;
